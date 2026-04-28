@@ -1,4 +1,5 @@
 console.log("🔥 INDEX RODANDO DE VERDADE");
+console.log("MONGO_URL =", process.env.MONGO_URL);
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
