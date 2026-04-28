@@ -1,3 +1,4 @@
+console.log("🔥 ROUTES CARREGOU");
 const express = require('express');
 const router = express.Router();
 

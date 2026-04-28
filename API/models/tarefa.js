@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+console.log("🔥 MODEL CARREGOU");const mongoose = require('mongoose');
 const schemaTarefa = new mongoose.Schema({
     descricao: {
         required: true,

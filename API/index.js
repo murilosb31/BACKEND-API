@@ -23,12 +23,9 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 // rotas
-//const routes = require('./routes/routes');
-//app.use('/api', routes);
+const routes = require('./routes/routes');
+app.use('/api', routes);
 
-app.get("/", (req, res) => {
-    res.json({ ok: true, msg: "API rodando 🚀" });
-});
 
 // Mongo (limpo e direto)
 mongoose.connect(process.env.MONGO_URL)
