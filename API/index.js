@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 // Importa o framework Express, usado para criar o servidor web
 const express = require('express');
 
@@ -66,9 +68,12 @@ var userArgs = process.argv.slice(2);
 var mongoose = require('mongoose');
 
 // Faz a conexão com o MongoDB usando a URL recebida por argumento
-const uri = "mongodb://admin:123456mu@ac-etwdcvg-shard-00-00.0njfmhm.mongodb.net:27017,ac-etwdcvg-shard-00-01.0njfmhm.mongodb.net:27017,ac-etwdcvg-shard-00-02.0njfmhm.mongodb.net:27017/?ssl=true&replicaSet=atlas-ouiwdh-shard-0&authSource=admin&appName=manoSeila";
 
-mongoose.connect(uri)
+mongoose.connect(process.env.MONGO_URL)
+  .then(() => console.log("Database Connected"))
+  .catch(err => console.log("Mongo Error:", err));
+
+
 // Define que o Mongoose vai usar as Promises nativas do JavaScript
 mongoose.Promise = global.Promise;
 
