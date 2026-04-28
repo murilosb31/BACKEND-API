@@ -1,93 +1,37 @@
+console.log("🔥 INDEX RODANDO DE VERDADE");
 require('dotenv').config();
-
-console.log("MONGO_URL:", process.env.MONGO_URL);
-
-// Importa o framework Express, usado para criar o servidor web
 const express = require('express');
+const mongoose = require('mongoose');
 
-// Cria a aplicação servidor
 const app = express();
 
-// Middleware global
-// Ele será executado em todas as requisições recebidas pelo servidor
+// CORS simples
 app.use((req, res, next) => {
-
-    // Permite que qualquer origem acesse a API
-    // Isso libera o CORS para todos os domínios
     res.setHeader("Access-Control-Allow-Origin", "*");
-
-    // Define quais métodos HTTP podem ser usados nas requisições
-    res.setHeader('Access-Control-Allow-Methods', 'HEAD, GET, POST, PATCH, DELETE');
-
-    // Define quais cabeçalhos podem ser enviados pelo cliente
-    res.header(
-        "Access-Control-Allow-Headers",
-        "Origin, X-Requested-With, Content-Type, Accept"
-    );
-
-    // Manda a execução continuar para o próximo middleware ou rota
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     next();
 });
 
-// Middleware do Express que converte automaticamente o corpo da requisição em JSON
-// Exemplo: se o cliente enviar {"nome":"Thiago"}, isso ficará disponível em req.body
 app.use(express.json());
 
-// Define a porta do servidor
-// Primeiro tenta usar a variável de ambiente PORT
-// Se ela não existir, usa a porta 3000
+// rota teste (IMPORTANTE PRA VER SE ESTÁ ONLINE)
+app.get("/", (req, res) => {
+    res.send("API rodando 🚀");
+});
+
 const PORT = process.env.PORT || 3000;
 
-// Importa o arquivo de rotas localizado em "./routes/routes"
-// Esse arquivo deve exportar um Router do Express (module.exports = router)
-// Ou seja, aqui você está trazendo todas as rotas definidas naquele arquivo
+// rotas
 const routes = require('./routes/routes');
-
-// Registra as rotas no servidor principal (app)
-// O prefixo '/api' será automaticamente adicionado a todas as rotas do router
-// Exemplo:
-// Se no router tiver: router.get('/tarefas')
-// A rota final será: http://localhost:3000/api/tarefas
 app.use('/api', routes);
 
-// Inicia o servidor na porta definida
-app.listen(PORT, () => {
-    console.log(`Server Started at ${PORT}`);
-});
-
-// Obtendo os parâmetros passados pela linha de comando
-// process.argv contém tudo que foi digitado ao executar o programa
-// slice(2) ignora:
-// [0] caminho do node
-// [1] caminho do arquivo js
-// e pega apenas os argumentos passados pelo usuário
-var userArgs = process.argv.slice(2);
-
-// Pega o primeiro argumento informado na linha de comando
-// Aqui espera-se que seja a URL de conexão com o MongoDB
-
-// Importa o Mongoose, biblioteca usada para conectar e modelar dados no MongoDB
-var mongoose = require('mongoose');
-
-// Faz a conexão com o MongoDB usando a URL recebida por argumento
-
+// Mongo (limpo e direto)
 mongoose.connect(process.env.MONGO_URL)
-  .then(() => console.log("Database Connected"))
-  .catch(err => console.log("Mongo Error:", err));
+    .then(() => console.log("Database Connected"))
+    .catch(err => console.log("Mongo Error:", err));
 
-
-// Define que o Mongoose vai usar as Promises nativas do JavaScript
-mongoose.Promise = global.Promise;
-
-// Obtém o objeto de conexão do Mongoose
-const db = mongoose.connection;
-
-// Evento disparado se ocorrer erro na conexão com o banco
-db.on('error', (error) => {
-    console.log(error);
-});
-
-// Evento disparado uma única vez quando a conexão for estabelecida com sucesso
-db.once('connected', () => {
-    console.log('Database Connected');
+// start server
+app.listen(PORT, () => {
+    console.log("Server Started at", PORT);
 });
