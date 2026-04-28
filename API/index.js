@@ -1,5 +1,7 @@
 require('dotenv').config();
 
+console.log("MONGO_URL:", process.env.MONGO_URL);
+
 // Importa o framework Express, usado para criar o servidor web
 const express = require('express');
 
