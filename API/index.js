@@ -6,17 +6,24 @@ const mongoose = require('mongoose');
 
 const app = express();
 
-// CORS simples
+// CORS — permite o header id-token usado pelo JWT
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
+    res.setHeader(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content-Type, Accept, id-token"
+    );
+    // Responde preflight OPTIONS direto (necessário para CORS com headers customizados)
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(200);
+    }
     next();
 });
 
 app.use(express.json());
 
-// rota teste (IMPORTANTE PRA VER SE ESTÁ ONLINE)
+// rota teste
 app.get("/", (req, res) => {
     res.send("API rodando 🚀");
 });
@@ -27,8 +34,7 @@ const PORT = process.env.PORT || 3000;
 const routes = require('./routes/routes');
 app.use('/api', routes);
 
-
-// Mongo (limpo e direto)
+// Mongo
 mongoose.connect(process.env.MONGO_URL)
     .then(() => console.log("Database Connected"))
     .catch(err => console.log("Mongo Error:", err));
