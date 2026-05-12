@@ -2,19 +2,27 @@ console.log("🔥 ROUTES CARREGOU");
 const express = require('express');
 const router = express.Router();
 
-// IMPORT DO MODEL
+// IMPORT DO MODEL DE TAREFAS
 const modeloTarefa = require('../models/tarefa');
 
 // ---------------- AUTENTICAÇÃO JWT ----------------
+const userModel = require('../models/user');
 var jwt = require('jsonwebtoken');
 
-// Endpoint de login — recebe nome e senha, retorna token JWT
-router.post('/login', (req, res, next) => {
-    if (req.body.nome === 'branqs' && req.body.senha === '1234') {
-        const token = jwt.sign({ id: req.body.nome }, 'segredo', { expiresIn: 300 });
-        return res.json({ auth: true, token: token });
+// Endpoint de login — busca usuário no banco e compara senha
+router.post('/login', async (req, res) => {
+    try {
+        const data = await userModel.findOne({ 'nome': req.body.nome });
+
+        if (data != null && data.senha === req.body.senha) {
+            const token = jwt.sign({ id: req.body.nome }, 'segredo', { expiresIn: 300 });
+            return res.json({ auth: true, token: token });
+        }
+
+        res.status(500).json({ message: 'Login invalido!' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
-    res.status(500).json({ message: 'Login invalido!' });
 });
 
 // Middleware que verifica o token JWT no header "id-token"
